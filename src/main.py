@@ -1,12 +1,8 @@
-import sys
-
 class MedSync:
     def __init__(self):
-        # Lista em memória para guardar os medicamentos
         self.medicamentos = []
 
     def adicionar_medicamento(self, nome, horario):
-        # Validação simples: não aceita nomes vazios
         if not nome.strip() or not horario.strip():
             raise ValueError("Nome e horário são obrigatórios.")
         
