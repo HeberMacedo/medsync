@@ -1,6 +1,5 @@
 import pytest
-# Importando de forma que o GitHub Actions entenda a pasta src
-from main import MedSync 
+from main import MedSync
 
 def test_adicionar_com_sucesso():
     app = MedSync()
