@@ -24,3 +24,4 @@ Eu configurei comandos simples para testar o código:
 
 **Versão:** 1.0.0  
 **Autor:** Heber Macedo
+**repositório:** `https://github.com/HeberMacedo/medsync`
