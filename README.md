@@ -1,4 +1,5 @@
 # MedSync
+![CI](https://github.com/HeberMacedo/medsync/actions/workflows/main.yml/badge.svg)
 
 Este é o meu projeto para o BootCamp. Criei o **MedSync** para ajudar no controle de medicamentos, pensando principalmente em idosos ou pessoas que tomam muitos remédios e acabam esquecendo os horários. 
 
