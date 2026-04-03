@@ -19,8 +19,8 @@ Para o código usei **Python**. Além disso, configurei o **Pytest** para garant
 
 ## Testes e Qualidade:
 Eu configurei comandos simples para testar o código:
-* Para rodar os testes: `pytest`
-* Para ver se o código está no padrão (Lint): `ruff check .`
+* Para rodar os testes: `python -m pytest`
+* Para ver se o código está no padrão (Lint): `python -m ruff check .`
 
 **Versão:** 1.0.0  
 **Autor:** Heber Macedo
