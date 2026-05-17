@@ -9,10 +9,13 @@ Nesta entrega intermediaria eu mantive a versao em Python pelo terminal e tambem
 
 ## O que da para fazer
 
-* Cadastrar um remedio e o horario.
+* Cadastrar um remedio, horario, dose e observacao.
 * Ver a lista de remedios cadastrados.
+* Remover um remedio da lista na versao web.
 * Consultar um endereco pelo CEP usando a API ViaCEP.
 * Usar a versao web pelo navegador.
+
+Na versao web, os remedios ficam salvos no proprio navegador.
 
 ## API usada
 

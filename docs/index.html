@@ -85,7 +85,20 @@
         font-size: 16px;
       }
 
-      input:focus {
+      textarea {
+        width: 100%;
+        min-height: 78px;
+        resize: vertical;
+        border: 1px solid #b8c7ce;
+        border-radius: 6px;
+        padding: 10px 12px;
+        color: #1f2933;
+        font-family: inherit;
+        font-size: 16px;
+      }
+
+      input:focus,
+      textarea:focus {
         border-color: #0f766e;
         outline: 3px solid #bdf4ed;
       }
@@ -121,6 +134,11 @@
         color: #12323a;
       }
 
+      .danger {
+        background: #f9dedc;
+        color: #9f1f18;
+      }
+
       .list {
         display: grid;
         gap: 10px;
@@ -135,10 +153,23 @@
         background: #fbfdfe;
       }
 
+      .item-header {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
       .item strong {
         display: block;
         margin-bottom: 4px;
         color: #12323a;
+      }
+
+      .item p {
+        margin: 8px 0 0;
+        color: #52616b;
+        line-height: 1.5;
       }
 
       .empty,
@@ -186,8 +217,8 @@
       <div class="wrap">
         <h1>MedSync</h1>
         <p>
-          Controle de medicamentos com cadastro de horarios e consulta de CEP
-          pela API publica ViaCEP para apoiar entrega ou retirada.
+          Controle de medicamentos com horario, dose, observacoes e endereco
+          de entrega ou retirada consultado pela API publica ViaCEP.
         </p>
       </div>
     </header>
@@ -205,6 +236,18 @@
               <label for="medication-time">Horario</label>
               <input id="medication-time" name="time" type="time" required>
             </div>
+            <div class="field">
+              <label for="medication-dose">Dose</label>
+              <input id="medication-dose" name="dose" placeholder="Ex: 500mg, 1 comprimido">
+            </div>
+            <div class="field">
+              <label for="medication-note">Observacao</label>
+              <textarea
+                id="medication-note"
+                name="note"
+                placeholder="Ex: tomar depois do almoco"
+              ></textarea>
+            </div>
             <div class="actions">
               <button class="primary" type="submit">Adicionar</button>
               <button class="secondary" id="clear-medications" type="button">Limpar lista</button>
@@ -216,10 +259,10 @@
         </section>
 
         <section aria-labelledby="cep-title">
-          <h2 id="cep-title">Endereco por CEP</h2>
+          <h2 id="cep-title">Entrega ou retirada</h2>
           <form id="cep-form">
             <div class="field">
-              <label for="cep">CEP</label>
+              <label for="cep">CEP do endereco</label>
               <input
                 id="cep"
                 name="cep"
@@ -244,6 +287,8 @@
       const medicationForm = document.querySelector("#medication-form");
       const medicationName = document.querySelector("#medication-name");
       const medicationTime = document.querySelector("#medication-time");
+      const medicationDose = document.querySelector("#medication-dose");
+      const medicationNote = document.querySelector("#medication-note");
       const medicationStatus = document.querySelector("#medication-status");
       const medicationList = document.querySelector("#medication-list");
       const clearMedications = document.querySelector("#clear-medications");
@@ -253,6 +298,14 @@
       const addressResult = document.querySelector("#address-result");
 
       let medications = JSON.parse(localStorage.getItem("medsync-medications") || "[]");
+      medications = medications.map((medication) => ({
+        id: medication.id || crypto.randomUUID(),
+        name: medication.name,
+        time: medication.time,
+        dose: medication.dose || "",
+        note: medication.note || "",
+      }));
+      saveMedications();
 
       function saveMedications() {
         localStorage.setItem("medsync-medications", JSON.stringify(medications));
@@ -268,15 +321,44 @@
 
         medications.forEach((medication) => {
           const item = document.createElement("article");
+          const header = document.createElement("div");
+          const details = document.createElement("div");
           const name = document.createElement("strong");
           const time = document.createElement("span");
+          const removeButton = document.createElement("button");
 
           item.className = "item";
+          header.className = "item-header";
           name.textContent = medication.name;
           time.textContent = `Horario: ${medication.time}`;
+          removeButton.className = "danger";
+          removeButton.type = "button";
+          removeButton.textContent = "Remover";
 
-          item.appendChild(name);
-          item.appendChild(time);
+          removeButton.addEventListener("click", () => {
+            medications = medications.filter((saved) => saved.id !== medication.id);
+            saveMedications();
+            renderMedications();
+            setStatus(medicationStatus, `${medication.name} removido da lista.`, "success");
+          });
+
+          details.appendChild(name);
+          details.appendChild(time);
+          header.append(details, removeButton);
+          item.appendChild(header);
+
+          if (medication.dose) {
+            const dose = document.createElement("p");
+            dose.textContent = `Dose: ${medication.dose}`;
+            item.appendChild(dose);
+          }
+
+          if (medication.note) {
+            const note = document.createElement("p");
+            note.textContent = `Observacao: ${medication.note}`;
+            item.appendChild(note);
+          }
+
           medicationList.appendChild(item);
         });
       }
@@ -295,13 +377,21 @@
 
         const name = medicationName.value.trim();
         const time = medicationTime.value.trim();
+        const dose = medicationDose.value.trim();
+        const note = medicationNote.value.trim();
 
         if (!name || !time) {
           setStatus(medicationStatus, "Nome e horario sao obrigatorios.", "error");
           return;
         }
 
-        medications.push({ name, time });
+        medications.push({
+          id: crypto.randomUUID(),
+          name,
+          time,
+          dose,
+          note,
+        });
         saveMedications();
         renderMedications();
         medicationForm.reset();

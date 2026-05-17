@@ -6,12 +6,17 @@ class MedSync:
         self.medicamentos = []
         self.endereco_entrega = None
 
-    def adicionar_medicamento(self, nome, horario):
+    def adicionar_medicamento(self, nome, horario, dose="", observacao=""):
         if not nome.strip() or not horario.strip():
             raise ValueError("Nome e horario sao obrigatorios.")
-        item = {"nome": nome, "horario": horario}
+        item = {
+            "nome": nome.strip(),
+            "horario": horario.strip(),
+            "dose": dose.strip(),
+            "observacao": observacao.strip(),
+        }
         self.medicamentos.append(item)
-        return f"Sucesso: {nome} agendado para as {horario}."
+        return f"Sucesso: {item['nome']} agendado para as {item['horario']}."
 
     def listar_medicamentos(self):
         if not self.medicamentos:
@@ -19,6 +24,10 @@ class MedSync:
         resultado = "\n--- Medicamentos Agendados ---"
         for medicamento in self.medicamentos:
             resultado += f"\n[medicamento] {medicamento['nome']} - {medicamento['horario']}"
+            if medicamento["dose"]:
+                resultado += f" - Dose: {medicamento['dose']}"
+            if medicamento["observacao"]:
+                resultado += f" - Obs: {medicamento['observacao']}"
         return resultado
 
     def definir_endereco_por_cep(self, cep):
@@ -47,8 +56,10 @@ def menu():
         if opcao == "1":
             nome = input("Nome do remedio: ")
             horario = input("Horario (ex: 08:00): ")
+            dose = input("Dose (opcional, ex: 500mg): ")
+            observacao = input("Observacao (opcional): ")
             try:
-                print(app.adicionar_medicamento(nome, horario))
+                print(app.adicionar_medicamento(nome, horario, dose, observacao))
             except ValueError as erro:
                 print(f"Erro: {erro}")
         elif opcao == "2":
